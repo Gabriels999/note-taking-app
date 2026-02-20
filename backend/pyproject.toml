@@ -6,10 +6,28 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "django>=5.2.11",
+    "python-decouple>=3.8",
 ]
 
 [dependency-groups]
 dev = [
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
+]
+
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "api.settings"
+python_files = ["test_*.py", "*_tests.py", "testing/python/*.py"]
+addopts = """
+    --cov=api
+    --cov-report=term-missing
+    --cov-fail-under=98
+    --cov-config=.coveragerc
+"""
+
+[tool.ruff]
+line-length = 79
+exclude = [
+    "*/migrations",
 ]
