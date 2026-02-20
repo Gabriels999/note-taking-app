@@ -13,12 +13,15 @@ dependencies = [
 dev = [
     "pytest>=9.0.2",
     "pytest-cov>=7.0.0",
+    "pytest-django>=4.11.1",
+    "ruff>=0.13.2",
 ]
 
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "api.settings"
-python_files = ["test_*.py", "*_tests.py", "testing/python/*.py"]
+DJANGO_SETTINGS_MODULE = "app.settings"
+python_files = ["test_*.py", "*_tests.py"]
+testpaths = ["api/tests"]
 addopts = """
     --cov=api
     --cov-report=term-missing
