@@ -3,8 +3,22 @@ from django.db import models
 
 
 class Category(models.Model):
+    DEFAULTS = (
+        {"name": "Random Thoughts", "color": "#EF9C66", "is_default": True},
+        {"name": "School", "color": "#FCDC94", "is_default": True},
+        {"name": "Personal", "color": "#78ABA8", "is_default": True},
+    )
+
     name = models.CharField(max_length=120)
-    color = models.CharField(max_length=32)
+    color = models.CharField(max_length=7)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="categories",
+        null=True,
+        blank=True,
+    )
+    is_default = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["name"]
@@ -12,7 +26,13 @@ class Category(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["name"],
-                name="unique_category_name",
+                condition=models.Q(owner__isnull=True),
+                name="unique_shared_category_name",
+            ),
+            models.UniqueConstraint(
+                fields=["owner", "name"],
+                condition=models.Q(owner__isnull=False),
+                name="unique_user_category_name",
             ),
         ]
 
