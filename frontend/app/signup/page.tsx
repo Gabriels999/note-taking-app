@@ -6,23 +6,9 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import EyeClosedIcon from "../../components/icons/eye-closed-icon";
 import EyeOpenIcon from "../../components/icons/eye-open-icon";
+import { ensureCsrfCookie, signupUser } from "../../services/api";
 
 import signupCat from "../../assets/signup_cat.png";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-function readCookie(name: string): string | null {
-  const key = `${name}=`;
-  const cookie = document.cookie
-    .split("; ")
-    .find((part) => part.startsWith(key));
-
-  if (!cookie) {
-    return null;
-  }
-
-  return decodeURIComponent(cookie.slice(key.length));
-}
 
 export default function SignupPage() {
   const router = useRouter();
@@ -32,22 +18,11 @@ export default function SignupPage() {
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!API_BASE_URL) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_API_BASE_URL. Set it in frontend/.env.local."
-    );
-  }
-
-  const csrfUrl = `${API_BASE_URL}/api/auth/csrf/`;
-  const signupUrl = `${API_BASE_URL}/api/auth/signup/`;
-
   useEffect(() => {
-    fetch(csrfUrl, {
-      credentials: "include",
-    }).catch(() => {
+    ensureCsrfCookie().catch(() => {
       setStatus("Could not initialize CSRF cookie.");
     });
-  }, [csrfUrl]);
+  }, []);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -55,31 +30,10 @@ export default function SignupPage() {
     setStatus("");
 
     try {
-      const csrfToken = readCookie("csrftoken");
-      const response = await fetch(signupUrl, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-CSRFToken": csrfToken ?? "",
-        },
-        body: new URLSearchParams({
-          username,
-          password1: password,
-          password2: password,
-        }).toString(),
-      });
-
-      const payload = await response.json();
-
-      if (!response.ok) {
-        setStatus(payload.detail ?? "Signup failed.");
-        return;
-      }
-
+      await signupUser({ username, password });
       router.push("/home");
-    } catch {
-      setStatus("Request failed.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Request failed.");
     } finally {
       setIsSubmitting(false);
     }

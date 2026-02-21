@@ -6,22 +6,8 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import EyeClosedIcon from "../../components/icons/eye-closed-icon";
 import EyeOpenIcon from "../../components/icons/eye-open-icon";
+import { ensureCsrfCookie, loginUser } from "../../services/api";
 import pineappleLogin from "../../assets/pineapple_login.png";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-function readCookie(name: string): string | null {
-  const key = `${name}=`;
-  const cookie = document.cookie
-    .split("; ")
-    .find((part) => part.startsWith(key));
-
-  if (!cookie) {
-    return null;
-  }
-
-  return decodeURIComponent(cookie.slice(key.length));
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,22 +17,11 @@ export default function LoginPage() {
   const [status, setStatus] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!API_BASE_URL) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_API_BASE_URL. Set it in frontend/.env.local."
-    );
-  }
-
-  const csrfUrl = `${API_BASE_URL}/api/auth/csrf/`;
-  const loginUrl = `${API_BASE_URL}/api/auth/login/`;
-
   useEffect(() => {
-    fetch(csrfUrl, {
-      credentials: "include",
-    }).catch(() => {
+    ensureCsrfCookie().catch(() => {
       setStatus("Could not initialize CSRF cookie.");
     });
-  }, [csrfUrl]);
+  }, []);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,30 +29,10 @@ export default function LoginPage() {
     setStatus("");
 
     try {
-      const csrfToken = readCookie("csrftoken");
-      const response = await fetch(loginUrl, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-CSRFToken": csrfToken ?? "",
-        },
-        body: new URLSearchParams({
-          username,
-          password,
-        }).toString(),
-      });
-
-      const payload = await response.json();
-
-      if (!response.ok) {
-        setStatus(payload.detail ?? "Login failed.");
-        return;
-      }
-
+      await loginUser({ username, password });
       router.push("/home");
-    } catch {
-      setStatus("Request failed.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Request failed.");
     } finally {
       setIsSubmitting(false);
     }
