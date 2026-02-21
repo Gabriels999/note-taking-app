@@ -89,7 +89,7 @@ export default function SignupPage() {
         <div className="login-plant signup-plant">
           <Image
             alt="Cat illustration"
-            className="login-plant-image"
+            className="login-plant-image signup-plant-image"
             priority
             src={signupCat}
           />

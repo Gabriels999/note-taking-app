@@ -131,8 +131,15 @@ button:disabled {
 }
 
 .signup-plant {
-  width: 8.8rem;
+  width: 188.14141845703125px;
+  height: 134px;
   margin-bottom: 1.25rem;
+}
+
+.signup-plant-image {
+  width: 188.14141845703125px;
+  height: 134px;
+  object-fit: contain;
 }
 
 .login-plant-image {
