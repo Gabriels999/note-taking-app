@@ -1,4 +1,4 @@
-import type { AuthCredentials } from "./interfaces";
+import type { AuthCredentials } from "./api-interfaces";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -69,7 +69,7 @@ export async function ensureCsrfCookie(): Promise<void> {
 }
 
 export async function loginUser(
-  params: AuthCredentials
+  params: AuthCredentials,
 ): Promise<Record<string, unknown>> {
   return postForm("/api/auth/login/", {
     username: params.username,
@@ -78,7 +78,7 @@ export async function loginUser(
 }
 
 export async function signupUser(
-  params: AuthCredentials
+  params: AuthCredentials,
 ): Promise<Record<string, unknown>> {
   return postForm("/api/auth/signup/", {
     username: params.username,
