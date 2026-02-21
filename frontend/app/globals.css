@@ -109,3 +109,115 @@ button:disabled {
   margin-top: 0.75rem;
   font-size: 0.9rem;
 }
+
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #e7dfcf;
+  padding: 1.5rem;
+}
+
+.login-shell {
+  width: min(24rem, 100%);
+  text-align: center;
+}
+
+.login-plant {
+  margin: 0 auto 1.1rem;
+  width: 6.2rem;
+  display: grid;
+  justify-items: center;
+}
+
+.signup-plant {
+  width: 8.8rem;
+  margin-bottom: 1.25rem;
+}
+
+.login-plant-image {
+  width: 100%;
+  height: auto;
+}
+
+.login-title {
+  margin: 0 0 1.4rem;
+  color: #88642A;
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 1.05;
+}
+
+.login-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.login-input {
+  width: 100%;
+  border: 1.5px solid #b18343;
+  border-radius: 0.4rem;
+  background: #ece5d7;
+  color: #6c4e21;
+  padding: 0.68rem 0.72rem;
+  font-size: 0.88rem;
+}
+
+.login-input::placeholder {
+  color: #6c4e21;
+}
+
+.login-password-wrap {
+  position: relative;
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #8f6830;
+  padding: 0.2rem;
+  width: 1.8rem;
+  height: 1.8rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.login-eye-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.login-button {
+  margin-top: 1.15rem;
+  width: 100%;
+  border: 1.5px solid #b18343;
+  border-radius: 999px;
+  background: transparent;
+  color: #9a6f33;
+  font-size: 1.45rem;
+  font-weight: 700;
+  font-family: Georgia, "Times New Roman", serif;
+  padding: 0.62rem 1rem;
+}
+
+.login-link-wrap {
+  margin-top: 0.75rem;
+}
+
+.login-link {
+  color: #a47a40;
+  font-size: 0.83rem;
+  text-decoration: underline;
+}
+
+.login-status {
+  margin-top: 0.65rem;
+  color: #6c4e21;
+  font-size: 0.9rem;
+}
