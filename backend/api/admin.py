@@ -1,3 +1,16 @@
 from django.contrib import admin
 
-# Register your models here.
+from api.models import Category, Note
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "color")
+    search_fields = ("name",)
+
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "user", "category", "edited_at")
+    list_filter = ("category", "user")
+    search_fields = ("title", "content")
