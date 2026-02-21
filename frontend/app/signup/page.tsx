@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import EyeClosedIcon from "../../components/icons/eye-closed-icon";
 import EyeOpenIcon from "../../components/icons/eye-open-icon";
@@ -24,6 +25,7 @@ function readCookie(name: string): string | null {
 }
 
 export default function SignupPage() {
+  const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -75,7 +77,7 @@ export default function SignupPage() {
         return;
       }
 
-      setStatus("Signup successful.");
+      router.push("/home");
     } catch {
       setStatus("Request failed.");
     } finally {
