@@ -1,0 +1,31 @@
+.container {
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.image {
+  width: 297px;
+  height: 296px;
+  object-fit: contain;
+}
+
+.message {
+  margin: 1rem 0 0;
+  color: #88642a;
+  font-size: 24px;
+  font-weight: 400;
+  font-family: "Inter";
+}
+
+@media (max-width: 720px) {
+  .image {
+    width: min(250px, 70vw);
+    height: auto;
+  }
+
+  .message {
+    font-size: 1.15rem;
+  }
+}

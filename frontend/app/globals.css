@@ -272,6 +272,11 @@ button:disabled {
   font-weight: 700;
 }
 
+.home-category-count {
+  margin-left: auto;
+  color: #1f1f1f;
+}
+
 .home-dot {
   width: 0.85rem;
   height: 0.85rem;
@@ -316,63 +321,12 @@ button:disabled {
   gap: 0.45rem;
 }
 
-.home-state {
-  align-self: center;
-  justify-self: center;
-  text-align: center;
-}
-
-.home-image {
-  width: 297px;
-  height: 296px;
-  object-fit: contain;
-}
-
-.home-state p {
-  margin: 1rem 0 0;
-  color: #88642A;
-  font-size: 24px;
-  font-weight: 400;
-  font-family: "Inter";
-}
-
-.note-regular {
-  width: min(640px, 100%);
-  min-height: 510px;
-  background: #aec6c7;
-  border: 7px solid #73aeb0;
-  border-radius: 24px;
-  box-shadow: 0 4px 10px rgb(0 0 0 / 16%);
-  padding: 28px 30px;
-}
-
-.note-regular-meta {
-  margin: 0;
-  display: flex;
-  gap: 18px;
-  color: #081118;
-  font-size: 42px;
-  line-height: 1.1;
-}
-
-.note-regular-date {
-  font-weight: 700;
-}
-
-.note-regular-title {
-  margin: 34px 0 20px;
-  color: #050607;
-  font-family: "Inria Serif", serif;
-  font-weight: 700;
-  font-size: clamp(2rem, 5.2vw, 3.9rem);
-  line-height: 1.05;
-}
-
-.note-regular-content {
-  margin: 0;
-  color: #111b22;
-  font-size: 44px;
-  line-height: 1.3;
+.home-notes-grid {
+  margin-top: 22px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
 }
 
 @media (max-width: 720px) {
@@ -401,27 +355,8 @@ button:disabled {
     font-size: 1rem;
   }
 
-  .home-image {
-    width: min(250px, 70vw);
-  }
-
-  .home-state p {
-    font-size: 1.15rem;
-  }
-
-  .note-regular {
-    min-height: 390px;
-    border-width: 5px;
-    border-radius: 20px;
-    padding: 20px;
-  }
-
-  .note-regular-meta {
-    font-size: 28px;
-    gap: 12px;
-  }
-
-  .note-regular-content {
-    font-size: 30px;
+  .home-notes-grid {
+    margin-top: 12px;
+    grid-template-columns: 1fr;
   }
 }

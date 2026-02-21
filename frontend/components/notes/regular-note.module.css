@@ -1,0 +1,56 @@
+.card {
+  min-height: 200px;
+  border: 3px solid;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 12%);
+  padding: 12px;
+}
+
+.meta {
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  color: #081118;
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.date {
+  font-weight: 700;
+}
+
+.title {
+  margin: 8px 0 6px;
+  color: #050607;
+  font-family: "Inria Serif", serif;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.1vw, 2.75rem);
+  line-height: 1.05;
+}
+
+.content {
+  margin: 0;
+  color: #111b22;
+  font-size: clamp(0.8rem, 1vw, 1.9rem);
+  line-height: 1.25;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 7;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .card {
+    min-height: 210px;
+  }
+
+  .meta {
+    font-size: 0.78rem;
+    gap: 8px;
+  }
+
+  .content {
+    font-size: 0.86rem;
+  }
+}

@@ -1,3 +1,5 @@
+import styles from "./regular-note.module.css";
+
 interface RegularNoteProps {
   createdAt: string | Date;
   category: string;
@@ -42,19 +44,19 @@ export default function RegularNote({
 
   return (
     <article
-      className="note-regular"
+      className={styles.card}
       style={{
         borderColor: color,
         backgroundColor: `${color}4D`,
       }}
     >
-      <p className="note-regular-meta">
-        <span className="note-regular-date">{noteDate}</span>
+      <p className={styles.meta}>
+        <span className={styles.date}>{noteDate}</span>
         <span>{category}</span>
       </p>
 
-      <h2 className="note-regular-title">{title}</h2>
-      <p className="note-regular-content">{content}</p>
+      <h2 className={styles.title}>{title}</h2>
+      <p className={styles.content}>{content}</p>
     </article>
   );
 }
