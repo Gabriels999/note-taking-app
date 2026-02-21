@@ -3,6 +3,7 @@ interface RegularNoteProps {
   category: string;
   title: string;
   content: string;
+  color: string;
 }
 
 function formatNoteDay(value: string | Date): string {
@@ -35,11 +36,18 @@ export default function RegularNote({
   category,
   title,
   content,
+  color,
 }: RegularNoteProps) {
   const noteDate = formatNoteDay(createdAt);
 
   return (
-    <article className="note-regular">
+    <article
+      className="note-regular"
+      style={{
+        borderColor: color,
+        backgroundColor: `${color}4D`,
+      }}
+    >
       <p className="note-regular-meta">
         <span className="note-regular-date">{noteDate}</span>
         <span>{category}</span>
