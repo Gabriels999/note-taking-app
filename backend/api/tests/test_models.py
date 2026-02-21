@@ -5,6 +5,10 @@ from django.db import IntegrityError
 from api.models import Category, Note
 
 
+def default_name(index):
+    return Category.DEFAULTS[index]["name"]
+
+
 @pytest.mark.django_db
 def test_note_must_have_category_and_user():
     user_model = get_user_model()
@@ -12,7 +16,7 @@ def test_note_must_have_category_and_user():
         username="model-user",
         password="strong-pass-123",
     )
-    category = Category.objects.create(name="Work", color="#22C55E")
+    category = Category.objects.get(name=default_name(0))
 
     note = Note.objects.create(
         title="First note",
@@ -43,7 +47,7 @@ def test_note_without_category_fails():
 
 @pytest.mark.django_db
 def test_note_without_user_fails():
-    category = Category.objects.create(name="Personal", color="#60A5FA")
+    category = Category.objects.get(name=default_name(1))
 
     with pytest.raises(IntegrityError):
         Note.objects.create(
@@ -56,7 +60,7 @@ def test_note_without_user_fails():
 @pytest.mark.django_db
 def test_category_can_have_many_notes_and_users():
     user_model = get_user_model()
-    category = Category.objects.create(name="Ideas", color="#F59E0B")
+    category = Category.objects.get(name=default_name(2))
     user_a = user_model.objects.create_user(
         username="user-a",
         password="strong-pass-123",
@@ -88,9 +92,9 @@ def test_category_can_have_many_notes_and_users():
 
 @pytest.mark.django_db
 def test_category_str_returns_name():
-    category = Category.objects.create(name="Books", color="#A855F7")
+    category = Category.objects.get(name=default_name(0))
 
-    assert str(category) == "Books"
+    assert str(category) == default_name(0)
 
 
 @pytest.mark.django_db
@@ -100,7 +104,7 @@ def test_note_str_returns_title():
         username="string-user",
         password="strong-pass-123",
     )
-    category = Category.objects.create(name="Study", color="#14B8A6")
+    category = Category.objects.get(name=default_name(1))
     note = Note.objects.create(
         title="Read chapter 1",
         content="Linear algebra notes",
@@ -109,3 +113,59 @@ def test_note_str_returns_title():
     )
 
     assert str(note) == "Read chapter 1"
+
+
+@pytest.mark.django_db
+def test_category_defaults_are_seeded():
+    categories = set(
+        Category.objects.values_list("name", "color", "is_default")
+    )
+
+    assert categories == {
+        (item["name"], item["color"], item.get("is_default", True))
+        for item in Category.DEFAULTS
+    }
+
+    assert Category.objects.filter(owner__isnull=True).count() == 3
+
+
+@pytest.mark.django_db
+def test_user_can_have_private_category_with_same_name_as_shared_default():
+    user_model = get_user_model()
+    user = user_model.objects.create_user(
+        username="private-category-user",
+        password="strong-pass-123",
+    )
+
+    category = Category.objects.create(
+        name=default_name(0),
+        color="#111111",
+        owner=user,
+        is_default=False,
+    )
+
+    assert category.owner_id == user.id
+    assert category.name == default_name(0)
+
+
+@pytest.mark.django_db
+def test_same_user_cannot_duplicate_private_category_name():
+    user_model = get_user_model()
+    user = user_model.objects.create_user(
+        username="dup-user",
+        password="strong-pass-123",
+    )
+    Category.objects.create(
+        name="Projects",
+        color="#111111",
+        owner=user,
+        is_default=False,
+    )
+
+    with pytest.raises(IntegrityError):
+        Category.objects.create(
+            name="Projects",
+            color="#222222",
+            owner=user,
+            is_default=False,
+        )
