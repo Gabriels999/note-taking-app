@@ -9,6 +9,7 @@ import EyeOpenIcon from "../../components/icons/eye-open-icon";
 import { ensureCsrfCookie, signupUser } from "../../services/api";
 
 import signupCat from "../../assets/signup_cat.png";
+import styles from "./signup.module.css";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -40,24 +41,24 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="login-screen">
-      <section className="login-shell">
-        <div className="login-plant signup-plant">
+    <main className={styles.screen}>
+      <section className={styles.shell}>
+        <div className={`${styles.plant} ${styles.signupPlant}`}>
           <Image
             alt="Cat illustration"
-            className="login-plant-image signup-plant-image"
+            className={`${styles.plantImage} ${styles.signupPlantImage}`}
             priority
             src={signupCat}
           />
         </div>
 
-        <h1 className="login-title">Yay, New Friend!</h1>
+        <h1 className={styles.title}>Yay, New Friend!</h1>
 
-        <form className="login-form" onSubmit={onSubmit}>
+        <form className={styles.form} onSubmit={onSubmit}>
           <input
             aria-label="Email address"
             autoComplete="username"
-            className="login-input"
+            className={styles.input}
             id="signup-email"
             onChange={(event) => setUsername(event.target.value)}
             placeholder="Email address"
@@ -65,11 +66,11 @@ export default function SignupPage() {
             value={username}
           />
 
-          <div className="login-password-wrap">
+          <div className={styles.passwordWrap}>
             <input
               aria-label="Password"
               autoComplete="new-password"
-              className="login-input"
+              className={styles.input}
               id="signup-password"
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Password"
@@ -79,26 +80,30 @@ export default function SignupPage() {
             />
             <button
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="login-password-toggle"
+              className={styles.passwordToggle}
               onClick={() => setShowPassword((current) => !current)}
               type="button"
             >
               {showPassword ? (
-                <EyeClosedIcon className="login-eye-icon" />
+                <EyeClosedIcon className={styles.eyeIcon} />
               ) : (
-                <EyeOpenIcon className="login-eye-icon" />
+                <EyeOpenIcon className={styles.eyeIcon} />
               )}
             </button>
           </div>
 
-          <button className="login-button" disabled={isSubmitting} type="submit">
+          <button
+            className={styles.submitButton}
+            disabled={isSubmitting}
+            type="submit"
+          >
             {isSubmitting ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
-        {status ? <p className="login-status">{status}</p> : null}
-        <p className="login-link-wrap">
-          <Link className="login-link" href="/login">
+        {status ? <p className={styles.status}>{status}</p> : null}
+        <p className={styles.linkWrap}>
+          <Link className={styles.link} href="/login">
             We&apos;re already friends!
           </Link>
         </p>
