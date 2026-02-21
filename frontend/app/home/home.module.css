@@ -1,0 +1,122 @@
+.screen {
+  min-height: 100vh;
+  background: #faf1e3;
+  padding: clamp(0.7rem, 1.5vw, 1rem);
+}
+
+.shell {
+  min-height: calc(100vh - clamp(1.4rem, 3vw, 2rem));
+  background: #faf1e3;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+.sidebar {
+  padding: 101px 24px 24px 40px;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.sidebar li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #1f1f1f;
+  font-size: 12px;
+}
+
+.categoryActive {
+  font-weight: 700;
+}
+
+.categoryCount {
+  margin-left: auto;
+  color: #1f1f1f;
+}
+
+.dot {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dotThoughts {
+  background: #ea9656;
+}
+
+.dotSchool {
+  background: #f0cb72;
+}
+
+.dotPersonal {
+  background: #6ca7a5;
+}
+
+.content {
+  padding: 40px 34px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.newNote {
+  border: 1px solid #957139;
+  border-radius: 999px;
+  background: transparent;
+  color: #957139;
+  font-size: 16px;
+  font-family: "Inter";
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.notesGrid {
+  margin-top: 22px;
+  display: grid;
+  column-gap: 13px;
+  row-gap: 16px;
+  grid-template-columns: repeat(3, 303px);
+  align-content: start;
+}
+
+@media (max-width: 720px) {
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .sidebar {
+    padding: 1.3rem 1rem 0.6rem;
+  }
+
+  .sidebar li {
+    font-size: 1rem;
+  }
+
+  .content {
+    padding: 0.7rem 1rem 1.4rem;
+  }
+
+  .newNote {
+    font-size: 1rem;
+  }
+
+  .notesGrid {
+    margin-top: 12px;
+    grid-template-columns: 1fr;
+  }
+}
