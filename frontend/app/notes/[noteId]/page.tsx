@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NoteEditor, {
   type NoteEditorDraft,
 } from "../../../components/notes/note-editor";
@@ -18,6 +18,7 @@ export default function NoteEditorPage() {
   const [editedAt, setEditedAt] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState("");
+  const hasHydratedDraft = useRef(false);
 
   useEffect(() => {
     if (!Number.isFinite(noteId)) {
@@ -39,6 +40,7 @@ export default function NoteEditorPage() {
           content: loadedNote.content,
           category_id: loadedNote.category.id,
         });
+        hasHydratedDraft.current = false;
         setEditedAt(loadedNote.edited_at);
       })
       .catch((error) => {
@@ -64,6 +66,12 @@ export default function NoteEditorPage() {
       return;
     }
 
+    if (!hasHydratedDraft.current) {
+      hasHydratedDraft.current = true;
+      return;
+    }
+
+    let isActive = true;
     const timeout = setTimeout(async () => {
       try {
         const updatedNote = await updateNote(noteId, {
@@ -71,16 +79,25 @@ export default function NoteEditorPage() {
           content: draft.content,
           category_id: draft.category_id,
         });
+        if (!isActive) {
+          return;
+        }
         setEditedAt(updatedNote.edited_at);
         setStatus("");
       } catch (error) {
+        if (!isActive) {
+          return;
+        }
         setStatus(
           error instanceof Error ? error.message : "Could not save note.",
         );
       }
     }, 500);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      isActive = false;
+      clearTimeout(timeout);
+    };
   }, [draft, noteId]);
 
   return (
