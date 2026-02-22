@@ -8,7 +8,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "owner", "is_default", "color")
     list_filter = ("is_default",)
     search_fields = ("name",)
-    readonly_fields = ("name", "owner", "is_default", "color")
+    readonly_fields = ("is_default",)
 
     def has_delete_permission(self, request, obj=None):
         if obj:

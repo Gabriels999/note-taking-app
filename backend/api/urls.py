@@ -7,6 +7,11 @@ urlpatterns = [
     path("auth/csrf/", views.csrf_cookie, name="csrf-cookie"),
     path("auth/login/", views.APILoginView.as_view(), name="auth-login"),
     path("auth/signup/", views.signup, name="auth-signup"),
+    path(
+        "categories/",
+        views.categories_collection,
+        name="categories-collection",
+    ),
     path("notes/", views.notes_collection, name="notes-collection"),
     path("notes/<int:note_id>/", views.note_detail, name="note-detail"),
 ]

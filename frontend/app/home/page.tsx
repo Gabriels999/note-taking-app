@@ -3,22 +3,22 @@
 import { useEffect, useMemo, useState } from "react";
 import EmptyNotesScreen from "../../components/notes/empty-notes-screen";
 import RegularNote from "../../components/notes/regular-note";
-import type { NoteItem } from "../../services/api-interfaces";
-import { getNotes } from "../../services/api";
+import type { NoteCategory, NoteItem } from "../../services/api-interfaces";
+import { getCategories, getNotes } from "../../services/api";
 import styles from "./home.module.css";
 
-const DEFAULT_CATEGORIES = ["Random Thoughts", "School", "Personal"] as const;
-
 export default function HomePage() {
+  const [categories, setCategories] = useState<NoteCategory[]>([]);
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
-    getNotes()
-      .then((loadedNotes) => {
+    Promise.all([getCategories(), getNotes()])
+      .then(([loadedCategories, loadedNotes]) => {
         if (isMounted) {
+          setCategories(loadedCategories);
           setNotes(loadedNotes);
         }
       })
@@ -36,57 +36,42 @@ export default function HomePage() {
   }, []);
 
   const categoryCounts = useMemo(() => {
-    const counts = DEFAULT_CATEGORIES.reduce<Record<string, number>>(
-      (acc, category) => {
-        acc[category] = 0;
-        return acc;
-      },
-      {},
-    );
+    const counts = categories.reduce<Record<string, number>>((acc, category) => {
+      acc[category.name] = 0;
+      return acc;
+    }, {});
 
     notes.forEach((note) => {
       counts[note.category.name] = (counts[note.category.name] ?? 0) + 1;
     });
 
     return counts;
-  }, [notes]);
+  }, [categories, notes]);
+
+  const totalNotes = useMemo(() => notes.length, [notes]);
 
   return (
     <main className={styles.screen}>
       <section className={styles.shell}>
         <aside className={styles.sidebar}>
           <ul>
-            <li className={styles.categoryActive}>All Categories</li>
-            <li>
-              <span
-                aria-hidden="true"
-                className={`${styles.dot} ${styles.dotThoughts}`}
-              />
-              Random Thoughts
-              <span className={styles.categoryCount}>
-                {categoryCounts["Random Thoughts"] ?? 0}
-              </span>
+            <li className={styles.categoryActive}>
+              All Categories
+              <span className={styles.categoryCount}>{totalNotes}</span>
             </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className={`${styles.dot} ${styles.dotSchool}`}
-              />
-              School
-              <span className={styles.categoryCount}>
-                {categoryCounts.School ?? 0}
-              </span>
-            </li>
-            <li>
-              <span
-                aria-hidden="true"
-                className={`${styles.dot} ${styles.dotPersonal}`}
-              />
-              Personal
-              <span className={styles.categoryCount}>
-                {categoryCounts.Personal ?? 0}
-              </span>
-            </li>
+            {categories.map((category) => (
+              <li key={category.id}>
+                <span
+                  aria-hidden="true"
+                  className={styles.dot}
+                  style={{ backgroundColor: category.color }}
+                />
+                {category.name}
+                <span className={styles.categoryCount}>
+                  {categoryCounts[category.name] ?? 0}
+                </span>
+              </li>
+            ))}
           </ul>
         </aside>
 

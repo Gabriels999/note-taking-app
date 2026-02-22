@@ -7,6 +7,8 @@ export interface NoteCategory {
   id: number;
   name: string;
   color: string;
+  is_default?: boolean;
+  owner_id?: number | null;
 }
 
 export interface NoteItem {
@@ -21,6 +23,10 @@ export interface NoteItem {
 
 export interface NotesCollectionResponse {
   notes: NoteItem[];
+}
+
+export interface CategoriesCollectionResponse {
+  categories: NoteCategory[];
 }
 
 export interface CreateNotePayload {
