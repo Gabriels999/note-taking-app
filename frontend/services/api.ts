@@ -1,6 +1,8 @@
 import type {
   AuthCredentials,
+  CategoriesCollectionResponse,
   CreateNotePayload,
+  NoteCategory,
   NoteItem,
   NotesCollectionResponse,
   UpdateNotePayload,
@@ -133,6 +135,13 @@ export async function signupUser(
 export async function getNotes(): Promise<NoteItem[]> {
   const data = (await getJson("/api/notes/")) as NotesCollectionResponse;
   return Array.isArray(data.notes) ? data.notes : [];
+}
+
+export async function getCategories(): Promise<NoteCategory[]> {
+  const data = (await getJson(
+    "/api/categories/",
+  )) as CategoriesCollectionResponse;
+  return Array.isArray(data.categories) ? data.categories : [];
 }
 
 export async function createNote(

@@ -47,18 +47,6 @@
   display: inline-block;
 }
 
-.dotThoughts {
-  background: #ea9656;
-}
-
-.dotSchool {
-  background: #f0cb72;
-}
-
-.dotPersonal {
-  background: #6ca7a5;
-}
-
 .content {
   padding: 40px 34px;
   display: grid;
