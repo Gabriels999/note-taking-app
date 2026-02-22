@@ -11,7 +11,9 @@ class CategoryAdmin(admin.ModelAdmin):
     readonly_fields = ("name", "owner", "is_default", "color")
 
     def has_delete_permission(self, request, obj=None):
-        return not obj.is_default
+        if obj:
+            return not obj.is_default
+        return True
 
 
 @admin.register(Note)
