@@ -1,4 +1,10 @@
-import type { AuthCredentials } from "./api-interfaces";
+import type {
+  AuthCredentials,
+  CreateNotePayload,
+  NoteItem,
+  NotesCollectionResponse,
+  UpdateNotePayload,
+} from "./api-interfaces";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -33,6 +39,23 @@ async function parseJson(response: Response): Promise<Record<string, unknown>> {
   }
 }
 
+function getErrorMessage(data: Record<string, unknown>): string {
+  return typeof data.detail === "string" ? data.detail : "Request failed.";
+}
+
+async function getJson(path: string): Promise<Record<string, unknown>> {
+  const response = await fetch(`${requireApiBaseUrl()}${path}`, {
+    credentials: "include",
+  });
+
+  const data = await parseJson(response);
+  if (!response.ok) {
+    throw new Error(getErrorMessage(data));
+  }
+
+  return data;
+}
+
 async function postForm(
   path: string,
   payload: Record<string, string>,
@@ -50,9 +73,29 @@ async function postForm(
   const data = await parseJson(response);
 
   if (!response.ok) {
-    throw new Error(
-      typeof data.detail === "string" ? data.detail : "Request failed.",
-    );
+    throw new Error(getErrorMessage(data));
+  }
+
+  return data;
+}
+
+async function patchJson(
+  path: string,
+  payload: UpdateNotePayload,
+): Promise<Record<string, unknown>> {
+  const response = await fetch(`${requireApiBaseUrl()}${path}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": readCookie("csrftoken") ?? "",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseJson(response);
+  if (!response.ok) {
+    throw new Error(getErrorMessage(data));
   }
 
   return data;
@@ -85,4 +128,30 @@ export async function signupUser(
     password1: params.password,
     password2: params.password,
   });
+}
+
+export async function getNotes(): Promise<NoteItem[]> {
+  const data = (await getJson("/api/notes/")) as NotesCollectionResponse;
+  return Array.isArray(data.notes) ? data.notes : [];
+}
+
+export async function createNote(
+  payload: CreateNotePayload,
+): Promise<NoteItem> {
+  return (await postForm("/api/notes/", {
+    title: payload.title,
+    content: payload.content,
+    category_id: String(payload.category_id),
+  })) as NoteItem;
+}
+
+export async function getNote(noteId: number): Promise<NoteItem> {
+  return (await getJson(`/api/notes/${noteId}/`)) as NoteItem;
+}
+
+export async function updateNote(
+  noteId: number,
+  payload: UpdateNotePayload,
+): Promise<NoteItem> {
+  return (await patchJson(`/api/notes/${noteId}/`, payload)) as NoteItem;
 }
