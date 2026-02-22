@@ -21,14 +21,6 @@ export interface NoteItem {
   user_id: number;
 }
 
-export interface NotesCollectionResponse {
-  notes: NoteItem[];
-}
-
-export interface CategoriesCollectionResponse {
-  categories: NoteCategory[];
-}
-
 export interface CreateNotePayload {
   title: string;
   content: string;

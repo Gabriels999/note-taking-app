@@ -37,9 +37,32 @@ Prerequisites:
 Setup and run:
 ```bash
 cd frontend
+cp .env.example .env
+nvm use v24.11.0
 npm install
 npm run dev
 ```
 
 ## API Baseline
 - Health check endpoint: `GET /api/health/`
+- Auth endpoints:
+  - `GET /api/auth/csrf/`
+  - `POST /api/auth/login/`
+
+## Frontend Baseline
+- Home page: `/`
+- Login page: `/login`
+
+## Docker (Optimized Builds)
+Prerequisites:
+- Docker + Docker Compose
+
+Run:
+```bash
+cp backend/.env.example backend/.env
+docker compose up --build
+```
+
+Apps:
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8000`

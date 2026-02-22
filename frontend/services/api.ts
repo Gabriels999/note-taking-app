@@ -1,10 +1,8 @@
 import type {
   AuthCredentials,
-  CategoriesCollectionResponse,
   CreateNotePayload,
   NoteCategory,
   NoteItem,
-  NotesCollectionResponse,
   UpdateNotePayload,
 } from "./api-interfaces";
 
@@ -43,6 +41,45 @@ async function parseJson(response: Response): Promise<Record<string, unknown>> {
 
 function getErrorMessage(data: Record<string, unknown>): string {
   return typeof data.detail === "string" ? data.detail : "Request failed.";
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isNoteCategory(value: unknown): value is NoteCategory {
+  if (!isObjectRecord(value)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === "number" &&
+    typeof value.name === "string" &&
+    typeof value.color === "string"
+  );
+}
+
+function isNoteItem(value: unknown): value is NoteItem {
+  if (!isObjectRecord(value) || !isNoteCategory(value.category)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === "number" &&
+    typeof value.title === "string" &&
+    typeof value.content === "string" &&
+    typeof value.created_at === "string" &&
+    typeof value.edited_at === "string" &&
+    typeof value.user_id === "number"
+  );
+}
+
+function parseNoteItemOrThrow(data: Record<string, unknown>): NoteItem {
+  if (!isNoteItem(data)) {
+    throw new Error("Unexpected note payload.");
+  }
+
+  return data;
 }
 
 async function getJson(path: string): Promise<Record<string, unknown>> {
@@ -133,34 +170,43 @@ export async function signupUser(
 }
 
 export async function getNotes(): Promise<NoteItem[]> {
-  const data = (await getJson("/api/notes/")) as NotesCollectionResponse;
-  return Array.isArray(data.notes) ? data.notes : [];
+  const data = await getJson("/api/notes/");
+  if (!Array.isArray(data.notes)) {
+    return [];
+  }
+
+  return data.notes.filter(isNoteItem);
 }
 
 export async function getCategories(): Promise<NoteCategory[]> {
-  const data = (await getJson(
-    "/api/categories/",
-  )) as CategoriesCollectionResponse;
-  return Array.isArray(data.categories) ? data.categories : [];
+  const data = await getJson("/api/categories/");
+  if (!Array.isArray(data.categories)) {
+    return [];
+  }
+
+  return data.categories.filter(isNoteCategory);
 }
 
 export async function createNote(
   payload: CreateNotePayload,
 ): Promise<NoteItem> {
-  return (await postForm("/api/notes/", {
+  const data = await postForm("/api/notes/", {
     title: payload.title,
     content: payload.content,
     category_id: String(payload.category_id),
-  })) as NoteItem;
+  });
+  return parseNoteItemOrThrow(data);
 }
 
 export async function getNote(noteId: number): Promise<NoteItem> {
-  return (await getJson(`/api/notes/${noteId}/`)) as NoteItem;
+  const data = await getJson(`/api/notes/${noteId}/`);
+  return parseNoteItemOrThrow(data);
 }
 
 export async function updateNote(
   noteId: number,
   payload: UpdateNotePayload,
 ): Promise<NoteItem> {
-  return (await patchJson(`/api/notes/${noteId}/`, payload)) as NoteItem;
+  const data = await patchJson(`/api/notes/${noteId}/`, payload);
+  return parseNoteItemOrThrow(data);
 }
