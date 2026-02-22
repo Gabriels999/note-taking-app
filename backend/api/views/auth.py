@@ -5,15 +5,6 @@ from django.http import HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 
-def health_check(request):
-    return JsonResponse(
-        {
-            "status": "ok",
-            "service": "backend",
-        }
-    )
-
-
 @ensure_csrf_cookie
 def csrf_cookie(request):
     return JsonResponse({"detail": "CSRF cookie set"})
