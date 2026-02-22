@@ -12,7 +12,6 @@ from api.services.note_service import (
 from api.validators.note_payload import (
     parse_request_data,
     validate_note_create_payload,
-    validate_note_patch_payload,
 )
 
 
@@ -70,12 +69,5 @@ def note_detail(request, note_id):
         )
     except CategoryNotFoundError:
         return JsonResponse({"detail": "Category not found"}, status=400)
-
-    errors = validate_note_patch_payload(note)
-    if errors:
-        return JsonResponse(
-            {"detail": "Invalid payload", "errors": errors},
-            status=400,
-        )
 
     return JsonResponse(serialize_note(note))

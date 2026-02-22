@@ -1,0 +1,82 @@
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.trigger {
+  width: 100%;
+  height: 39px;
+  border: 1px solid #957139;
+  border-radius: 6px;
+  background: #faf1e3;
+  color: #000;
+  font: inherit;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.triggerLabel {
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.chevron {
+  margin-left: auto;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #957139;
+  border-bottom: 2px solid #957139;
+  transform: rotate(45deg);
+  transition: transform 120ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(-135deg);
+}
+
+.options {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 8px 0;
+  border-radius: 8px;
+  background: #f7efdf;
+  display: grid;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.optionButton {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #000;
+  font: inherit;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+
+.optionButton:hover {
+  background: rgb(156 120 58 / 10%);
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

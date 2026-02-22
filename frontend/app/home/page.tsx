@@ -1,19 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import EmptyNotesScreen from "../../components/notes/empty-notes-screen";
 import RegularNote from "../../components/notes/regular-note";
 import type { NoteCategory, NoteItem } from "../../services/api-interfaces";
-import { getCategories, getNotes } from "../../services/api";
+import { createNote, getCategories, getNotes } from "../../services/api";
 import styles from "./home.module.css";
 
 export default function HomePage() {
+  const router = useRouter();
   const [categories, setCategories] = useState<NoteCategory[]>([]);
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null,
   );
   const [status, setStatus] = useState("");
+  const [isCreatingNote, setIsCreatingNote] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -39,10 +42,13 @@ export default function HomePage() {
   }, []);
 
   const categoryCounts = useMemo(() => {
-    const counts = categories.reduce<Record<string, number>>((acc, category) => {
-      acc[category.name] = 0;
-      return acc;
-    }, {});
+    const counts = categories.reduce<Record<string, number>>(
+      (acc, category) => {
+        acc[category.name] = 0;
+        return acc;
+      },
+      {},
+    );
 
     notes.forEach((note) => {
       counts[note.category.name] = (counts[note.category.name] ?? 0) + 1;
@@ -59,6 +65,36 @@ export default function HomePage() {
 
     return notes.filter((note) => note.category.id === selectedCategoryId);
   }, [notes, selectedCategoryId]);
+
+  async function handleCreateNote() {
+    setIsCreatingNote(true);
+    const defaultCategory =
+      categories.find((category) => category.name === "Random Thoughts") ??
+      categories[0];
+
+    if (!defaultCategory) {
+      setStatus("Could not create note: category list is empty.");
+      setIsCreatingNote(false);
+      return;
+    }
+
+    setStatus("");
+
+    try {
+      const createdNote = await createNote({
+        title: "",
+        content: "",
+        category_id: defaultCategory.id,
+      });
+      router.push(`/notes/${createdNote.id}`);
+    } catch (error) {
+      setStatus(
+        error instanceof Error ? error.message : "Could not create note.",
+      );
+    } finally {
+      setIsCreatingNote(false);
+    }
+  }
 
   return (
     <main className={styles.screen}>
@@ -78,7 +114,9 @@ export default function HomePage() {
               <li
                 key={category.id}
                 className={
-                  selectedCategoryId === category.id ? styles.categoryActive : ""
+                  selectedCategoryId === category.id
+                    ? styles.categoryActive
+                    : ""
                 }
                 onClick={() => setSelectedCategoryId(category.id)}
               >
@@ -98,7 +136,12 @@ export default function HomePage() {
 
         <section className={styles.content}>
           <div className={styles.topbar}>
-            <button className={styles.newNote} type="button">
+            <button
+              className={styles.newNote}
+              disabled={isCreatingNote}
+              onClick={handleCreateNote}
+              type="button"
+            >
               <span aria-hidden="true">+</span> New Note
             </button>
           </div>
@@ -110,14 +153,20 @@ export default function HomePage() {
               <EmptyNotesScreen />
             ) : (
               filteredNotes.map((note) => (
-                <RegularNote
+                <button
+                  className={styles.noteCardButton}
                   key={note.id}
-                  category={note.category.name}
-                  color={note.category.color}
-                  content={note.content}
-                  createdAt={note.created_at}
-                  title={note.title}
-                />
+                  onClick={() => router.push(`/notes/${note.id}`)}
+                  type="button"
+                >
+                  <RegularNote
+                    category={note.category.name}
+                    color={note.category.color}
+                    content={note.content}
+                    createdAt={note.created_at}
+                    title={note.title}
+                  />
+                </button>
               ))
             )}
           </div>

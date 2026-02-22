@@ -85,7 +85,7 @@ def test_notes_collection_create_rejects_invalid_category(client):
 
 
 @pytest.mark.django_db
-def test_notes_collection_create_requires_all_fields(client):
+def test_notes_collection_create_requires_category(client):
     user_model = get_user_model()
     user = user_model.objects.create_user("author", password="strong-pass-123")
     client.force_login(user)
@@ -100,6 +100,34 @@ def test_notes_collection_create_requires_all_fields(client):
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid payload"
+    assert response.json()["errors"]["category_id"] == [
+        "This field is required."
+    ]
+
+
+@pytest.mark.django_db
+def test_notes_collection_create_allows_empty_title_and_content(client):
+    user_model = get_user_model()
+    user = user_model.objects.create_user(
+        "author-empty", password="strong-pass-123"
+    )
+    category = Category.objects.get(name=Category.DEFAULTS[0]["name"])
+    client.force_login(user)
+
+    response = client.post(
+        reverse("notes-collection"),
+        {
+            "title": "",
+            "content": "",
+            "category_id": category.id,
+        },
+    )
+
+    assert response.status_code == 201
+    payload = response.json()
+    assert payload["title"] == ""
+    assert payload["content"] == ""
+    assert payload["category"]["id"] == category.id
 
 
 @pytest.mark.django_db
@@ -191,7 +219,7 @@ def test_note_detail_patch_updates_fields(client):
 
 
 @pytest.mark.django_db
-def test_note_detail_patch_blank_title_is_invalid(client):
+def test_note_detail_patch_blank_title_is_allowed(client):
     user_model = get_user_model()
     user = user_model.objects.create_user(
         "editor_blank", password="strong-pass-123"
@@ -211,12 +239,13 @@ def test_note_detail_patch_blank_title_is_invalid(client):
         content_type="application/json",
     )
 
-    assert response.status_code == 400
-    assert response.json()["errors"]["title"] == ["This field is required."]
+    assert response.status_code == 200
+    note.refresh_from_db()
+    assert note.title == ""
 
 
 @pytest.mark.django_db
-def test_note_detail_patch_blank_content_is_invalid(client):
+def test_note_detail_patch_blank_content_is_allowed(client):
     user_model = get_user_model()
     user = user_model.objects.create_user(
         "editor_blank_content", password="strong-pass-123"
@@ -236,8 +265,9 @@ def test_note_detail_patch_blank_content_is_invalid(client):
         content_type="application/json",
     )
 
-    assert response.status_code == 400
-    assert response.json()["errors"]["content"] == ["This field is required."]
+    assert response.status_code == 200
+    note.refresh_from_db()
+    assert note.content == ""
 
 
 @pytest.mark.django_db
