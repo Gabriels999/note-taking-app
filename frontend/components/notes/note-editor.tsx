@@ -80,7 +80,7 @@ export default function NoteEditor({
           onClick={onClose}
           type="button"
         >
-          ×
+          <span className={styles.srOnly}>Close</span>
         </button>
       </section>
 

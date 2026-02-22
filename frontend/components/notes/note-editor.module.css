@@ -18,13 +18,46 @@
 }
 
 .closeButton {
+  width: 24px;
+  height: 24px;
+  position: relative;
   border: 0;
   background: transparent;
   color: #957139;
-  font-size: 42px;
-  line-height: 1;
   padding: 0;
   cursor: pointer;
+}
+
+.closeButton::before,
+.closeButton::after {
+  content: "";
+  position: absolute;
+  top: 11px;
+  left: 2px;
+  width: 20px;
+  height: 2px;
+  background: #957139;
+  border-radius: 999px;
+}
+
+.closeButton::before {
+  transform: rotate(45deg);
+}
+
+.closeButton::after {
+  transform: rotate(-45deg);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .editor {
