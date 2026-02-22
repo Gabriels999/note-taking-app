@@ -53,3 +53,20 @@ def test_category_admin_allows_delete_for_non_default_category():
     assert (
         admin_obj.has_delete_permission(request, obj=custom_category) is True
     )
+
+
+@pytest.mark.django_db
+def test_category_admin_allows_delete_when_obj_is_none():
+    user_model = get_user_model()
+    admin_user = user_model.objects.create_superuser(
+        username="admin-user-3",
+        email="admin3@example.com",
+        password="strong-pass-123",
+    )
+
+    site = AdminSite()
+    admin_obj = CategoryAdmin(Category, site)
+    request = RequestFactory().get("/admin/api/category/")
+    request.user = admin_user
+
+    assert admin_obj.has_delete_permission(request, obj=None) is True
