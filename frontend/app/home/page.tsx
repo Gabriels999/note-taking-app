@@ -39,10 +39,13 @@ export default function HomePage() {
   }, []);
 
   const categoryCounts = useMemo(() => {
-    const counts = categories.reduce<Record<string, number>>((acc, category) => {
-      acc[category.name] = 0;
-      return acc;
-    }, {});
+    const counts = categories.reduce<Record<string, number>>(
+      (acc, category) => {
+        acc[category.name] = 0;
+        return acc;
+      },
+      {},
+    );
 
     notes.forEach((note) => {
       counts[note.category.name] = (counts[note.category.name] ?? 0) + 1;
@@ -78,7 +81,9 @@ export default function HomePage() {
               <li
                 key={category.id}
                 className={
-                  selectedCategoryId === category.id ? styles.categoryActive : ""
+                  selectedCategoryId === category.id
+                    ? styles.categoryActive
+                    : ""
                 }
                 onClick={() => setSelectedCategoryId(category.id)}
               >
