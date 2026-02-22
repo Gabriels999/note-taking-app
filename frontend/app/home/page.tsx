@@ -10,6 +10,9 @@ import styles from "./home.module.css";
 export default function HomePage() {
   const [categories, setCategories] = useState<NoteCategory[]>([]);
   const [notes, setNotes] = useState<NoteItem[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null,
+  );
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -49,18 +52,36 @@ export default function HomePage() {
   }, [categories, notes]);
 
   const totalNotes = useMemo(() => notes.length, [notes]);
+  const filteredNotes = useMemo(() => {
+    if (selectedCategoryId === null) {
+      return notes;
+    }
+
+    return notes.filter((note) => note.category.id === selectedCategoryId);
+  }, [notes, selectedCategoryId]);
 
   return (
     <main className={styles.screen}>
       <section className={styles.shell}>
         <aside className={styles.sidebar}>
           <ul>
-            <li className={styles.categoryActive}>
+            <li
+              className={
+                selectedCategoryId === null ? styles.categoryActive : ""
+              }
+              onClick={() => setSelectedCategoryId(null)}
+            >
               All Categories
               <span className={styles.categoryCount}>{totalNotes}</span>
             </li>
             {categories.map((category) => (
-              <li key={category.id}>
+              <li
+                key={category.id}
+                className={
+                  selectedCategoryId === category.id ? styles.categoryActive : ""
+                }
+                onClick={() => setSelectedCategoryId(category.id)}
+              >
                 <span
                   aria-hidden="true"
                   className={styles.dot}
@@ -85,10 +106,10 @@ export default function HomePage() {
           {status ? <p className={styles.status}>{status}</p> : null}
 
           <div className={styles.notesGrid}>
-            {notes.length === 0 ? (
+            {filteredNotes.length === 0 ? (
               <EmptyNotesScreen />
             ) : (
-              notes.map((note) => (
+              filteredNotes.map((note) => (
                 <RegularNote
                   key={note.id}
                   category={note.category.name}
