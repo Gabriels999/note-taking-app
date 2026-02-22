@@ -1,36 +1,12 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import CategorySelector from "../../../components/categories/category-selector";
+import { useEffect, useState } from "react";
+import NoteEditor, {
+  type NoteEditorDraft,
+} from "../../../components/notes/note-editor";
 import type { NoteCategory } from "../../../services/api-interfaces";
 import { getCategories, getNote, updateNote } from "../../../services/api";
-import styles from "./note-editor.module.css";
-
-interface NoteDraft {
-  title: string;
-  content: string;
-  category_id: number;
-}
-
-function formatLastEdited(value: string): string {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  })
-    .format(date)
-    .replace(" AM", "am")
-    .replace(" PM", "pm");
-}
 
 export default function NoteEditorPage() {
   const params = useParams<{ noteId: string }>();
@@ -38,9 +14,8 @@ export default function NoteEditorPage() {
   const noteId = Number(params.noteId);
 
   const [categories, setCategories] = useState<NoteCategory[]>([]);
-  const [draft, setDraft] = useState<NoteDraft | null>(null);
+  const [draft, setDraft] = useState<NoteEditorDraft | null>(null);
   const [editedAt, setEditedAt] = useState("");
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState("");
 
@@ -84,11 +59,6 @@ export default function NoteEditorPage() {
     };
   }, [noteId]);
 
-  const selectedCategory = useMemo(
-    () => categories.find((category) => category.id === draft?.category_id),
-    [categories, draft?.category_id],
-  );
-
   useEffect(() => {
     if (!draft || !Number.isFinite(noteId)) {
       return;
@@ -114,77 +84,14 @@ export default function NoteEditorPage() {
   }, [draft, noteId]);
 
   return (
-    <main className={styles.screen}>
-      <section className={styles.topbar}>
-        <div className={styles.selectorWrap}>
-          <CategorySelector
-            isOpen={isCategoryOpen}
-            onSelect={(categoryId) => {
-              setDraft((current) =>
-                current ? { ...current, category_id: categoryId } : current,
-              );
-              setIsCategoryOpen(false);
-            }}
-            onToggle={() => setIsCategoryOpen((current) => !current)}
-            options={categories}
-            selectedCategoryId={draft?.category_id ?? null}
-          />
-        </div>
-
-        <button
-          aria-label="Close editor"
-          className={styles.closeButton}
-          onClick={() => router.push("/home")}
-          type="button"
-        >
-          ×
-        </button>
-      </section>
-
-      <section
-        className={styles.editor}
-        style={{
-          borderColor: selectedCategory?.color ?? "#ef9c66",
-          backgroundColor: selectedCategory?.color
-            ? `${selectedCategory.color}80`
-            : "rgb(239 156 102 / 50%)",
-        }}
-      >
-        <p className={styles.lastEdited}>
-          Last Edited: {editedAt ? formatLastEdited(editedAt) : "--"}
-        </p>
-
-        {isLoading || !draft ? (
-          <p className={styles.status}>Loading note...</p>
-        ) : (
-          <>
-            <input
-              className={styles.titleInput}
-              onChange={(event) =>
-                setDraft((current) =>
-                  current ? { ...current, title: event.target.value } : current,
-                )
-              }
-              placeholder="Note Title"
-              value={draft.title}
-            />
-            <textarea
-              className={styles.contentInput}
-              onChange={(event) =>
-                setDraft((current) =>
-                  current
-                    ? { ...current, content: event.target.value }
-                    : current,
-                )
-              }
-              placeholder="Pour your heart out..."
-              value={draft.content}
-            />
-          </>
-        )}
-
-        {status ? <p className={styles.status}>{status}</p> : null}
-      </section>
-    </main>
+    <NoteEditor
+      categories={categories}
+      draft={draft}
+      editedAt={editedAt}
+      isLoading={isLoading}
+      onClose={() => router.push("/home")}
+      onDraftChange={setDraft}
+      status={status}
+    />
   );
 }
