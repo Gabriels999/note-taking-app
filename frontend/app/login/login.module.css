@@ -87,6 +87,11 @@
   font-weight: 700;
   font-family: "Inter";
   padding: 0.62rem 1rem;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: #95713933;
 }
 
 .linkWrap {
