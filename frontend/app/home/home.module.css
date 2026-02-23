@@ -80,6 +80,10 @@
   cursor: pointer;
 }
 
+.newNote:hover:not(:disabled) {
+  background: #95713933;
+}
+
 .newNote:disabled {
   opacity: 0.65;
   cursor: not-allowed;
