@@ -7,7 +7,12 @@ Full-stack note taking application:
 ## Project Structure
 - `backend/`: Django app, API endpoints, tests, Python tooling.
 - `frontend/`: Next.js app (App Router, TypeScript).
-- `AI_USAGE_LOG.md`: bullet-point log of how AI is used during development.
+- `AI_USAGE_LOG.md`: final AI usage report (generated from a chronological usage diary maintained during development).
+
+## AI Usage
+- AI was used as a development assistant for implementation speed, code review support, debugging, refactoring suggestions, and test/CI setup.
+- Final architecture and product decisions were made by me, with AI suggestions reviewed before acceptance.
+- Detailed usage report: `AI_USAGE_LOG.md`.
 
 ## Backend (Django)
 Prerequisites:
@@ -43,15 +48,27 @@ npm install
 npm run dev
 ```
 
-## API Baseline
-- Health check endpoint: `GET /api/health/`
-- Auth endpoints:
+## API Endpoints
+- Health:
+  - `GET /api/health/`
+- Auth:
   - `GET /api/auth/csrf/`
   - `POST /api/auth/login/`
+  - `POST /api/auth/signup/`
+- Categories:
+  - `GET /api/categories/`
+- Notes:
+  - `GET /api/notes/`
+  - `POST /api/notes/`
+  - `GET /api/notes/{note_id}/`
+  - `PATCH /api/notes/{note_id}/`
 
 ## Frontend Baseline
 - Home page: `/`
 - Login page: `/login`
+- Signup page: `/signup`
+- Notes home page: `/home`
+- Note editor page: `/notes/[noteId]`
 
 ## Docker (Optimized Builds)
 Prerequisites:
